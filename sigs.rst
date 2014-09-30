@@ -119,11 +119,11 @@ Security considerations
 Sign bit
 ---------
 The Ed25519 sign bit could be stored in the unused high bit of a
-Curve25519 public key.  But for compatibility with existing Curve25519
+Curve25519 public key.  For compatibility with existing Curve25519
 keys it's here stored in the signature (an idea due to Robert Ransom).
 This allows an attacker to try to forge a signature for Alice based on
-either her "real" Ed25519 public key or its negative.  But both are
-legitimate public keys, so an attacker who can't break Ed25519 can't
+either her "real" Ed25519 public key or its negative.  Since both are
+legitimate public keys, an attacker who can't break Ed25519 can't
 forge signatures for either.
 
 Nonce
@@ -157,7 +157,7 @@ label prefix of ``[0xFF]*32``.
 Acknowledgements
 =================
 Thanks to Robert Ransom, Mike Hamburg, Samuel Neves, and Christian
-Winnerlein for advice and feedback at different stages.
+Winnerlein for advice and feedback.
 
 
 References
