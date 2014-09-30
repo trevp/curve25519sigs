@@ -138,7 +138,8 @@ If using the same keypair for signatures and ECDH, the ECDH output should be has
 
 Acknowledgements
 =================
-Thanks to Robert Ransom, Mike Hamburg, Samuel Neves, Christian Winnerlein, and Watson Ladd for advice and feedback at different stages.
+Thanks to Robert Ransom, Mike Hamburg, Samuel Neves, and Christian
+Winnerlein for advice and feedback at different stages.
 
 
 References
