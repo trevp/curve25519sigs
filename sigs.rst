@@ -71,7 +71,7 @@ Signing
    signature = R || S
 
    # Copy sign bit of public key into unused bit of signature:
-   signature[63] |= A_ed[31] & 0x80
+   signature[63] |= (A_ed[31] & 0x80)
    return signature
 
 Verifying
@@ -83,7 +83,7 @@ Verifying
    A_ed = (A-1) * ((A+1)^-1)  (mod 2^255-19)
 
    # Move sign bit from signature to public key
-   A_ed[31] |= (signature[63] & 0x80);
+   A_ed[31] |= (signature[63] & 0x80)
    signature[63] &= 0x7F
 
    # Verify standard Ed25519 signature
