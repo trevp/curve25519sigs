@@ -3,8 +3,8 @@ Curve25519 Signatures
 =======================
 
  * **Author:** Trevor Perrin (curves @ trevp.net)
- * **Date:** 2014-10-12
- * **Revision:** 00 (work in progress)
+ * **Date:** 2014-10-13
+ * **Revision:** 01 (work in progress)
  * **Copyright:** This document is placed in the public domain
 
 Introduction
@@ -17,19 +17,35 @@ a single keypair can be used for both ECDH and signatures.
 Algorithms
 =
 
+Notation
+-
+    Name           Explanation
+    -----          -----------
+    *              Multiplication, including point-scalar multiplication
+    +              Addition
+    ||             Concatenation of byte sequences
+    ^              Exponentiation
+    &, |=, &=      Bitwise operations as in C
+    BYTES(val, N)  Byte sequence of length N filled with val
+    X[i]           Byte i in a byte sequence
+    ED()           Convert elliptic curve point to Ed25519-encoded point
+
+Integers are stored as little-endian byte sequences.  Conversion
+between integers and byte sequences is implicit.
+
 Variables
 -
 
-    Name       Explanation                                  Size (bytes)
-    -----      --------------                               ------------
-    a          Private scalar                               32
-    A          Curve25519 public key                        32
-    A_ed       Ed25519 conversion of Curve25519 public key  32
-    B          Ed25519 base point                           -
-    random     Random value from secure RNG                 64
-    label      [0xFE] || [0xFF]*31 (for different oracles)  32
-    msg        Message to be signed                         any
-    L          Order of base point                          -
+    Name    Explanation                                  Size (bytes)
+    ----    -----------                                  ------------
+    a       Private scalar                               32
+    A       Curve25519 public key                        32
+    A_ed    Ed25519 conversion of Curve25519 public key  32
+    B       Ed25519 base point                           -
+    random  Random value from secure RNG                 64
+    label   BYTES(0xFE, 1) || BYTES(0xFE, 31)            32
+    msg     Message to be signed                         any
+    L       Order of base point                          -
 
 Key generation
 -
@@ -42,14 +58,15 @@ Signing
 -
 
     Sign(a, msg, random):
+    
       # Derive Schnorr nonce
       r = SHA512(label || a || msg || random)  (mod L)
  
       # Calculate Ed25519 public key
-      A_ed = a * B
+      A_ed = ED(a * B)
 
       # Create standard Ed25519 signature
-      R = r * B
+      R = ED(r * B)
       S = r + SHA512(R || A_ed || msg) * a  (mod L)
       signature = R || S
 
@@ -61,6 +78,11 @@ Verifying
 -
 
     Verify(A, msg, signature):
+    
+      # Mask off the Curve25519 public key's unused high bit,
+      # ensuring A in the range 0...2^255-1
+      A[31] &= 0x7F
+      
       # Convert Curve25519 public key to Ed25519 form
       A_ed = (A-1) * ((A+1)^-1)  (mod 2^255-19)
 
@@ -121,7 +143,7 @@ as [Pointcheval-Stern][]) by separating uses of the hash function.
 Note that the `label` is not a possible value for `R`.  If using the
 same keypair for signatures and ECDH, the ECDH output should be hashed
 via a different "random oracle", e.g. SHA512 with a label prefix of
-`[0xFF]*32`.
+`BYTES(0xFF, 32)`.
 
 The random value is not essential but helps ensures the nonce and
 scalar are independent, and reduces the risk of nonce collisions or
