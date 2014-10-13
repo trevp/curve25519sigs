@@ -2,13 +2,10 @@
 Curve25519 Signatures
 =======================
 
- * **Author:** Trevor Perrin
- * **Contact:** curves@trevp.net
+ * **Author:** Trevor Perrin (curves @ trevp.net)
  * **Date:** 2014-10-11
- * **Status:** Work in progress
- * **Version:** 0
- * **Revision:** 0
- * **Copyright:** This document is hereby placed in the public domain
+ * **Revision:** 00 (work in progress)
+ * **Copyright:** This document is placed in the public domain
 
 Introduction
 =
@@ -32,7 +29,7 @@ Variables
     A_ed       Ed25519 conversion of Curve25519 public key  32
     B          Ed25519 base point                           -
     random     Random value from secure RNG                 64
-    label      [0xFE] || [0xFF]*31 (for random oracles)     32
+    label      [0xFE] || [0xFF]*31 (for different oracles)  32
     msg        Message to be signed                         any
     L          Order of base point                          -
 
@@ -82,10 +79,13 @@ Implementation considerations
 
 Key conversion
 -
+
 Converting the Curve25519 public key to Ed25519 is straightforward
 using the equivalence `y = (A-1)/(A+1)` ([Ed25519](#Ed25519),
-[TwistedEdwards][]).  `A=-1` should be mapped to 0, which happens
-naturally if inversion is done with exponentiation.
+[TwistedEdwards][]).  To prevent `A=-1` causing a division-by-zero
+error, this value should be mapped to an Ed25519 value of zero.  This
+happens naturally if inversion is done by exponentiation to -1 (mod
+2^255-19).
 
 Performance
 -
@@ -105,7 +105,7 @@ Sign bit
 -
 The Ed25519 public key's sign bit is conveyed in the signature.  This
 allows an attacker to try to forge a signature for Alice based on
-either her "real" Ed25519 public key or its negative.  Since both are
+either her actual Ed25519 public key or its negative.  Since both are
 legitimate public keys, an attacker who can't break Ed25519 can't
 forge signatures for either.
 
@@ -120,18 +120,16 @@ master key.  To sign with existing scalars we instead do:
 
     r = SHA512(label || a || msg || random)  (mod L)
 
-The label is to aid security proofs in the Random Oracle Model (such
+The `label` is to aid security proofs in the Random Oracle Model (such
 as [Pointcheval-Stern][]) by separating uses of the hash function.
+Note that the `label` is not a possible value for `R`.  If using the
+same keypair for signatures and ECDH, the ECDH output should be hashed
+via a different "random oracle", e.g. SHA512 with a label prefix of
+`[0xFF]*32`.
 
 The random value is not essential but helps ensures the nonce and
 scalar are independent, and reduces the risk of nonce collisions or
 biases.
-
-ECDH + signatures
--
-If using the same keypair for signatures and ECDH, the ECDH output
-should be hashed via a different "random oracle", e.g. SHA512 with a
-label prefix of `[0xFF]*32`.
 
 Acknowledgements
 =
