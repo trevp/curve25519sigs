@@ -43,7 +43,7 @@ Variables
     A_ed    Ed25519 conversion of Curve25519 public key  32
     B       Ed25519 base point                           -
     random  Random value from secure RNG                 64
-    label   BYTES(0xFE, 1) || BYTES(0xFE, 31)            32
+    label   BYTES(0xFE, 1) || BYTES(0xFF, 31)            32
     msg     Message to be signed                         any
     L       Order of base point                          -
 
