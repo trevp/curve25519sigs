@@ -82,8 +82,7 @@ Converting the Curve25519 public key to Ed25519 is straightforward
 using the equivalence `y = (A-1)/(A+1)` ([Ed25519](#Ed25519),
 [TwistedEdwards][]).  To prevent `A=-1` causing a division-by-zero
 error, this value should be mapped to an Ed25519 value of zero.  This
-happens naturally if inversion is done by exponentiation to 2^255-21
-(mod 2^255-19).
+happens naturally if inversion is done by exponentiation.
 
 Performance
 -
