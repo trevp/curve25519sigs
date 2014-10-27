@@ -3,7 +3,7 @@ Curve25519 Signatures
 =======================
 
  * **Author:** Trevor Perrin (curves @ trevp.net)
- * **Date:** 2014-10-13
+ * **Date:** 2014-10-27
  * **Revision:** 01 (work in progress)
  * **Copyright:** This document is placed in the public domain
 
