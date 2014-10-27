@@ -161,18 +161,20 @@ same key pair for signatures and ECDH, the ECDH output should be
 hashed via a different "random oracle", e.g. SHA512 with a label
 prefix of `BYTES(0xFF, 32)`.
 
-The random value is not essential but helps ensures the nonce and
-scalar are independent, and reduces the risk of nonce collisions or
-biases.
+The random value makes this a randomized signature instead of a
+deterministic signature.  The randomization is not essential but helps
+ensures the nonce and scalar are independent, and reduces the risk of
+nonce collisions or biases.
 
 5. Acknowledgements
 =
 
 Thanks to Robert Ransom for suggesting storing the sign bit in the
-signature.
+signature.  Thanks to Mike Hamburg for suggesting this particular
+nonce derivation.
 
 Thanks to Robert Ransom, Mike Hamburg, Samuel Neves, and Christian
-Winnerlein for advice and feedback.
+Winnerlein for general advice and feedback.
 
 Thanks to Joseph Bonneau for detailed editorial feedback.
 
